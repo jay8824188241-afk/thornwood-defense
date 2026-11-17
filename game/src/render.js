@@ -307,14 +307,19 @@ function drawGhost(ctx, state) {
   const def = TOWERS[state.selectedKind];
   const x = (col + 0.5) * CELL;
   const y = HUD_HEIGHT + (row + 0.5) * CELL;
-  const buildable = state.gold >= def.cost;
+  // input.js already folds the road/blocked/gold checks into hover.buildable,
+  // so the ghost agrees with what a click would actually do: a red ring
+  // (and no range wash) over a cell where the tower cannot go.
+  const buildable = state.hover.buildable !== false;
   ctx.save();
-  ctx.globalAlpha = 0.35;
-  ctx.fillStyle = def.color;
-  ctx.beginPath();
-  ctx.arc(x, y, def.range, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.globalAlpha = 0.9;
+  if (buildable) {
+    ctx.globalAlpha = 0.35;
+    ctx.fillStyle = def.color;
+    ctx.beginPath();
+    ctx.arc(x, y, def.range, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 0.9;
+  }
   ctx.strokeStyle = buildable ? '#ffffff' : '#ff6b6b';
   ctx.lineWidth = 2;
   ctx.beginPath();
